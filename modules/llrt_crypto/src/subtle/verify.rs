@@ -12,9 +12,8 @@ use crate::CRYPTO_PROVIDER;
 use super::{
     algorithm_invalid_access_error,
     crypto_key::{CryptoKey, KeyKind},
-    digest,
     key_algorithm::KeyAlgorithm,
-    rsa_hash_digest, rsa_pss_salt_length_is_valid,
+    rsa_hash, rsa_pss_salt_length_is_valid,
     sign_algorithm::SigningAlgorithm,
     util::ResultDomExt,
 };
@@ -93,10 +92,8 @@ fn verify(
                 _ => return algorithm_invalid_access_error(ctx, "ECDSA"),
             };
 
-            let digest = digest::digest(hash, data);
-
             crate::CRYPTO_PROVIDER
-                .ecdsa_verify(*curve, handle, signature, &digest)
+                .ecdsa_verify(*curve, handle, signature, data, *hash)
                 .into_verification(ctx)?
         },
         SigningAlgorithm::Ed25519 => {
@@ -129,25 +126,19 @@ fn verify(
                 .into_verification(ctx)?
         },
         SigningAlgorithm::RsaPss { salt_length } => {
-            let (hash, digest) = rsa_hash_digest(ctx, key, data, "RSA-PSS")?;
+            let hash = rsa_hash(ctx, key, "RSA-PSS")?;
             if !rsa_pss_salt_length_is_valid(key, hash, *salt_length) {
                 false
             } else {
                 crate::CRYPTO_PROVIDER
-                    .rsa_pss_verify(
-                        &key.handle,
-                        signature,
-                        digest.as_ref(),
-                        *salt_length as usize,
-                        *hash,
-                    )
+                    .rsa_pss_verify(&key.handle, signature, data, *salt_length as usize, *hash)
                     .into_verification(ctx)?
             }
         },
         SigningAlgorithm::RsassaPkcs1v15 => {
-            let (hash, digest) = rsa_hash_digest(ctx, key, data, "RSASSA-PKCS1-v1_5")?;
+            let hash = rsa_hash(ctx, key, "RSASSA-PKCS1-v1_5")?;
             crate::CRYPTO_PROVIDER
-                .rsa_pkcs1v15_verify(&key.handle, signature, digest.as_ref(), *hash)
+                .rsa_pkcs1v15_verify(&key.handle, signature, data, *hash)
                 .into_verification(ctx)?
         },
     })

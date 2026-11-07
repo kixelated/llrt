@@ -241,19 +241,21 @@ pub trait CryptoProvider {
     // HMAC operations
     fn hmac(&self, algorithm: HashAlgorithm, key: &[u8]) -> Self::Hmac;
 
-    // ECDSA operations
+    // ECDSA operations, over `data` hashed with `hash_alg`
     fn ecdsa_sign(
         &self,
         curve: EllipticCurve,
         private_key_der: &[u8],
-        digest: &[u8],
+        data: &[u8],
+        hash_alg: HashAlgorithm,
     ) -> Result<Vec<u8>, CryptoError>;
     fn ecdsa_verify(
         &self,
         curve: EllipticCurve,
         public_key_sec1: &[u8],
         signature: &[u8],
-        digest: &[u8],
+        data: &[u8],
+        hash_alg: HashAlgorithm,
     ) -> Result<bool, CryptoError>;
 
     // EdDSA operations
@@ -265,11 +267,11 @@ pub trait CryptoProvider {
         data: &[u8],
     ) -> Result<bool, CryptoError>;
 
-    // RSA operations
+    // RSA operations, over `data` hashed with `hash_alg`
     fn rsa_pss_sign(
         &self,
         private_key_der: &[u8],
-        digest: &[u8],
+        data: &[u8],
         salt_length: usize,
         hash_alg: HashAlgorithm,
     ) -> Result<Vec<u8>, CryptoError>;
@@ -277,21 +279,21 @@ pub trait CryptoProvider {
         &self,
         public_key_der: &[u8],
         signature: &[u8],
-        digest: &[u8],
+        data: &[u8],
         salt_length: usize,
         hash_alg: HashAlgorithm,
     ) -> Result<bool, CryptoError>;
     fn rsa_pkcs1v15_sign(
         &self,
         private_key_der: &[u8],
-        digest: &[u8],
+        data: &[u8],
         hash_alg: HashAlgorithm,
     ) -> Result<Vec<u8>, CryptoError>;
     fn rsa_pkcs1v15_verify(
         &self,
         public_key_der: &[u8],
         signature: &[u8],
-        digest: &[u8],
+        data: &[u8],
         hash_alg: HashAlgorithm,
     ) -> Result<bool, CryptoError>;
     fn rsa_oaep_encrypt(
@@ -496,6 +498,14 @@ pub trait HmacProvider: Send {
         Self: Sized;
 }
 
+/// Hashes `data` with `provider`'s `algorithm`, for a backend that signs digests.
+#[allow(dead_code)]
+pub(crate) fn hash<P: CryptoProvider>(provider: &P, algorithm: HashAlgorithm, data: &[u8]) -> Vec<u8> {
+    let mut digest = provider.digest(algorithm);
+    digest.update(data);
+    digest.finalize()
+}
+
 #[derive(Debug)]
 #[allow(dead_code)]
 pub enum CryptoError {
@@ -591,8 +601,9 @@ macro_rules! impl_hybrid_provider {
                 c: EllipticCurve,
                 k: &[u8],
                 d: &[u8],
+                a: HashAlgorithm,
             ) -> Result<Vec<u8>, CryptoError> {
-                rust::RustCryptoProvider.ecdsa_sign(c, k, d)
+                rust::RustCryptoProvider.ecdsa_sign(c, k, d, a)
             }
             fn ecdsa_verify(
                 &self,
@@ -600,8 +611,9 @@ macro_rules! impl_hybrid_provider {
                 k: &[u8],
                 s: &[u8],
                 d: &[u8],
+                a: HashAlgorithm,
             ) -> Result<bool, CryptoError> {
-                rust::RustCryptoProvider.ecdsa_verify(c, k, s, d)
+                rust::RustCryptoProvider.ecdsa_verify(c, k, s, d, a)
             }
             fn ed25519_sign(&self, k: &[u8], d: &[u8]) -> Result<Vec<u8>, CryptoError> {
                 rust::RustCryptoProvider.ed25519_sign(k, d)
@@ -1270,17 +1282,19 @@ mod tests {
             let p = provider();
             let (private_key, public_key) = p.generate_ec_key(EllipticCurve::P256).unwrap();
 
-            // Create a digest to sign
-            let mut digest = p.digest(HashAlgorithm::Sha256);
-            digest.update(b"message to sign");
-            let hash = digest.finalize();
-
+            let message = b"message to sign";
             let signature = p
-                .ecdsa_sign(EllipticCurve::P256, &private_key, &hash)
+                .ecdsa_sign(EllipticCurve::P256, &private_key, message, HashAlgorithm::Sha256)
                 .unwrap();
 
             let valid = p
-                .ecdsa_verify(EllipticCurve::P256, &public_key, &signature, &hash)
+                .ecdsa_verify(
+                    EllipticCurve::P256,
+                    &public_key,
+                    &signature,
+                    message,
+                    HashAlgorithm::Sha256,
+                )
                 .unwrap();
 
             assert!(valid);
@@ -1291,16 +1305,19 @@ mod tests {
             let p = provider();
             let (private_key, public_key) = p.generate_ec_key(EllipticCurve::P384).unwrap();
 
-            let mut digest = p.digest(HashAlgorithm::Sha384);
-            digest.update(b"message to sign");
-            let hash = digest.finalize();
-
+            let message = b"message to sign";
             let signature = p
-                .ecdsa_sign(EllipticCurve::P384, &private_key, &hash)
+                .ecdsa_sign(EllipticCurve::P384, &private_key, message, HashAlgorithm::Sha384)
                 .unwrap();
 
             let valid = p
-                .ecdsa_verify(EllipticCurve::P384, &public_key, &signature, &hash)
+                .ecdsa_verify(
+                    EllipticCurve::P384,
+                    &public_key,
+                    &signature,
+                    message,
+                    HashAlgorithm::Sha384,
+                )
                 .unwrap();
 
             assert!(valid);
@@ -1353,16 +1370,13 @@ mod tests {
             let p = provider();
             let (private_key, public_key) = p.generate_rsa_key(2048, &[1, 0, 1]).unwrap();
 
-            let mut digest = p.digest(HashAlgorithm::Sha256);
-            digest.update(b"message to sign");
-            let hash = digest.finalize();
-
+            let message = b"message to sign";
             let signature = p
-                .rsa_pss_sign(&private_key, &hash, 32, HashAlgorithm::Sha256)
+                .rsa_pss_sign(&private_key, message, 32, HashAlgorithm::Sha256)
                 .unwrap();
 
             let valid = p
-                .rsa_pss_verify(&public_key, &signature, &hash, 32, HashAlgorithm::Sha256)
+                .rsa_pss_verify(&public_key, &signature, message, 32, HashAlgorithm::Sha256)
                 .unwrap();
 
             assert!(valid);
@@ -1373,16 +1387,13 @@ mod tests {
             let p = provider();
             let (private_key, public_key) = p.generate_rsa_key(2048, &[1, 0, 1]).unwrap();
 
-            let mut digest = p.digest(HashAlgorithm::Sha256);
-            digest.update(b"message to sign");
-            let hash = digest.finalize();
-
+            let message = b"message to sign";
             let signature = p
-                .rsa_pkcs1v15_sign(&private_key, &hash, HashAlgorithm::Sha256)
+                .rsa_pkcs1v15_sign(&private_key, message, HashAlgorithm::Sha256)
                 .unwrap();
 
             let valid = p
-                .rsa_pkcs1v15_verify(&public_key, &signature, &hash, HashAlgorithm::Sha256)
+                .rsa_pkcs1v15_verify(&public_key, &signature, message, HashAlgorithm::Sha256)
                 .unwrap();
 
             assert!(valid);

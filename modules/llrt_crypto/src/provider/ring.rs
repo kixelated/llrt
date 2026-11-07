@@ -183,7 +183,8 @@ impl CryptoProvider for RingProvider {
         &self,
         _curve: EllipticCurve,
         _private_key_der: &[u8],
-        _digest: &[u8],
+        _data: &[u8],
+        _hash_alg: HashAlgorithm,
     ) -> Result<Vec<u8>, CryptoError> {
         Err(CryptoError::UnsupportedAlgorithm)
     }
@@ -193,7 +194,8 @@ impl CryptoProvider for RingProvider {
         _curve: EllipticCurve,
         _public_key_sec1: &[u8],
         _signature: &[u8],
-        _digest: &[u8],
+        _data: &[u8],
+        _hash_alg: HashAlgorithm,
     ) -> Result<bool, CryptoError> {
         Err(CryptoError::UnsupportedAlgorithm)
     }
@@ -214,7 +216,7 @@ impl CryptoProvider for RingProvider {
     fn rsa_pss_sign(
         &self,
         _private_key_der: &[u8],
-        _digest: &[u8],
+        _data: &[u8],
         _salt_length: usize,
         _hash_alg: HashAlgorithm,
     ) -> Result<Vec<u8>, CryptoError> {
@@ -225,7 +227,7 @@ impl CryptoProvider for RingProvider {
         &self,
         _public_key_der: &[u8],
         _signature: &[u8],
-        _digest: &[u8],
+        _data: &[u8],
         _salt_length: usize,
         _hash_alg: HashAlgorithm,
     ) -> Result<bool, CryptoError> {
@@ -235,7 +237,7 @@ impl CryptoProvider for RingProvider {
     fn rsa_pkcs1v15_sign(
         &self,
         _private_key_der: &[u8],
-        _digest: &[u8],
+        _data: &[u8],
         _hash_alg: HashAlgorithm,
     ) -> Result<Vec<u8>, CryptoError> {
         Err(CryptoError::UnsupportedAlgorithm)
@@ -245,7 +247,7 @@ impl CryptoProvider for RingProvider {
         &self,
         _public_key_der: &[u8],
         _signature: &[u8],
-        _digest: &[u8],
+        _data: &[u8],
         _hash_alg: HashAlgorithm,
     ) -> Result<bool, CryptoError> {
         Err(CryptoError::UnsupportedAlgorithm)

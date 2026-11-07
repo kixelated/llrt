@@ -91,7 +91,8 @@ impl CryptoProvider for GraviolaProvider {
         &self,
         _curve: EllipticCurve,
         _private_key_der: &[u8],
-        _digest: &[u8],
+        _data: &[u8],
+        _hash_alg: HashAlgorithm,
     ) -> Result<Vec<u8>, CryptoError> {
         Err(CryptoError::UnsupportedAlgorithm)
     }
@@ -101,7 +102,8 @@ impl CryptoProvider for GraviolaProvider {
         _curve: EllipticCurve,
         _public_key_sec1: &[u8],
         _signature: &[u8],
-        _digest: &[u8],
+        _data: &[u8],
+        _hash_alg: HashAlgorithm,
     ) -> Result<bool, CryptoError> {
         Err(CryptoError::UnsupportedAlgorithm)
     }
@@ -122,7 +124,7 @@ impl CryptoProvider for GraviolaProvider {
     fn rsa_pss_sign(
         &self,
         _private_key_der: &[u8],
-        _digest: &[u8],
+        _data: &[u8],
         _salt_length: usize,
         _hash_alg: HashAlgorithm,
     ) -> Result<Vec<u8>, CryptoError> {
@@ -133,7 +135,7 @@ impl CryptoProvider for GraviolaProvider {
         &self,
         _public_key_der: &[u8],
         _signature: &[u8],
-        _digest: &[u8],
+        _data: &[u8],
         _salt_length: usize,
         _hash_alg: HashAlgorithm,
     ) -> Result<bool, CryptoError> {
@@ -143,7 +145,7 @@ impl CryptoProvider for GraviolaProvider {
     fn rsa_pkcs1v15_sign(
         &self,
         _private_key_der: &[u8],
-        _digest: &[u8],
+        _data: &[u8],
         _hash_alg: HashAlgorithm,
     ) -> Result<Vec<u8>, CryptoError> {
         Err(CryptoError::UnsupportedAlgorithm)
@@ -153,7 +155,7 @@ impl CryptoProvider for GraviolaProvider {
         &self,
         _public_key_der: &[u8],
         _signature: &[u8],
-        _digest: &[u8],
+        _data: &[u8],
         _hash_alg: HashAlgorithm,
     ) -> Result<bool, CryptoError> {
         Err(CryptoError::UnsupportedAlgorithm)

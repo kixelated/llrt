@@ -12,7 +12,7 @@ use super::{
     algorithm_invalid_access_error,
     crypto_key::{CryptoKey, KeyKind},
     key_algorithm::KeyAlgorithm,
-    rsa_hash_digest,
+    rsa_hash,
     sign_algorithm::SigningAlgorithm,
     util::ResultDomExt,
     validate_rsa_pss_salt_length,
@@ -72,10 +72,8 @@ fn sign(
                 _ => return algorithm_invalid_access_error(ctx, "ECDSA"),
             };
 
-            let digest = crate::subtle::digest::digest(hash, data);
-
             crate::CRYPTO_PROVIDER
-                .ecdsa_sign(*curve, handle, &digest)
+                .ecdsa_sign(*curve, handle, data, *hash)
                 .or_throw_dom(ctx)?
         },
         SigningAlgorithm::Ed25519 => {
@@ -105,16 +103,16 @@ fn sign(
             modern::ml_dsa_sign(*variant, handle, data, context).or_throw_dom(ctx)?
         },
         SigningAlgorithm::RsaPss { salt_length } => {
-            let (hash, digest) = rsa_hash_digest(ctx, key, data, "RSA-PSS")?;
+            let hash = rsa_hash(ctx, key, "RSA-PSS")?;
             validate_rsa_pss_salt_length(ctx, key, hash, *salt_length)?;
             crate::CRYPTO_PROVIDER
-                .rsa_pss_sign(&key.handle, digest.as_ref(), *salt_length as usize, *hash)
+                .rsa_pss_sign(&key.handle, data, *salt_length as usize, *hash)
                 .or_throw_dom(ctx)?
         },
         SigningAlgorithm::RsassaPkcs1v15 => {
-            let (hash, digest) = rsa_hash_digest(ctx, key, data, "RSASSA-PKCS1-v1_5")?;
+            let hash = rsa_hash(ctx, key, "RSASSA-PKCS1-v1_5")?;
             crate::CRYPTO_PROVIDER
-                .rsa_pkcs1v15_sign(&key.handle, digest.as_ref(), *hash)
+                .rsa_pkcs1v15_sign(&key.handle, data, *hash)
                 .or_throw_dom(ctx)?
         },
     })
