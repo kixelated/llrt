@@ -872,7 +872,7 @@ describe("SubtleCrypto.getPublicKey", () => {
       [
         {
           name: "RSA-PSS",
-          modulusLength: 1024,
+          modulusLength: 2048,
           publicExponent: new Uint8Array([1, 0, 1]),
           hash: "SHA-256",
         },
@@ -1056,7 +1056,7 @@ describe("SubtleCrypto.supports", () => {
       );
     expect(supports("generateKey", rsa512)).toBe(canGenerateRsa512);
     expect(
-      supports("generateKey", { ...algorithm, modulusLength: 1024 })
+      supports("generateKey", { ...algorithm, modulusLength: 2048 })
     ).toBe(true);
     expect(
       supports("generateKey", { name: "HMAC", hash: "SHA-256", length: 1024 })

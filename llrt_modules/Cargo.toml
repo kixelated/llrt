@@ -27,6 +27,7 @@ tls-graviola = [
   "llrt_tls?/tls-graviola",
   "llrt_fetch?/tls-graviola",
 ]
+tls-rind = ["llrt_http?/tls-rind", "llrt_tls?/tls-rind", "llrt_fetch?/tls-rind"]
 tls-openssl = ["llrt_http?/tls-openssl", "llrt_tls?/tls-openssl"]
 
 # Crypto provider features
@@ -35,6 +36,7 @@ crypto-ring = ["llrt_crypto?/crypto-ring"]
 crypto-ring-rust = ["llrt_crypto?/crypto-ring-rust"]
 crypto-graviola = ["llrt_crypto?/crypto-graviola"]
 crypto-graviola-rust = ["llrt_crypto?/crypto-graviola-rust"]
+crypto-rind = ["llrt_crypto?/crypto-rind"]
 crypto-openssl = ["llrt_crypto?/crypto-openssl"]
 
 # OpenSSL vendored (builds OpenSSL from source)

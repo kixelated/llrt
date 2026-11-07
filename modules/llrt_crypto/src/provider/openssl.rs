@@ -136,8 +136,11 @@ impl CryptoProvider for OpenSslProvider {
         &self,
         curve: EllipticCurve,
         private_key_der: &[u8],
-        digest: &[u8],
+        data: &[u8],
+        hash_alg: HashAlgorithm,
     ) -> Result<Vec<u8>, CryptoError> {
+        let digest = super::hash(self, hash_alg, data);
+        let digest = digest.as_slice();
         let group = get_ec_group(curve)?;
         let ec_key = EcKey::private_key_from_der(private_key_der)
             .map_err(|e| CryptoError::InvalidKey(Some(e.to_string().into())))?;
@@ -157,8 +160,11 @@ impl CryptoProvider for OpenSslProvider {
         curve: EllipticCurve,
         public_key_sec1: &[u8],
         signature: &[u8],
-        digest: &[u8],
+        data: &[u8],
+        hash_alg: HashAlgorithm,
     ) -> Result<bool, CryptoError> {
+        let digest = super::hash(self, hash_alg, data);
+        let digest = digest.as_slice();
         let group = get_ec_group(curve)?;
         let ec_key = EcKey::public_key_from_der(public_key_sec1).or_else(|_| {
             let point = openssl::ec::EcPoint::from_bytes(
@@ -206,10 +212,12 @@ impl CryptoProvider for OpenSslProvider {
     fn rsa_pss_sign(
         &self,
         private_key_der: &[u8],
-        digest: &[u8],
+        data: &[u8],
         salt_length: usize,
         hash_alg: HashAlgorithm,
     ) -> Result<Vec<u8>, CryptoError> {
+        let digest = super::hash(self, hash_alg, data);
+        let digest = digest.as_slice();
         let rsa = Rsa::private_key_from_der(private_key_der)
             .map_err(|e| CryptoError::InvalidKey(Some(e.to_string().into())))?;
         let pkey =
@@ -238,10 +246,12 @@ impl CryptoProvider for OpenSslProvider {
         &self,
         public_key_der: &[u8],
         signature: &[u8],
-        digest: &[u8],
+        data: &[u8],
         salt_length: usize,
         hash_alg: HashAlgorithm,
     ) -> Result<bool, CryptoError> {
+        let digest = super::hash(self, hash_alg, data);
+        let digest = digest.as_slice();
         let rsa = Rsa::public_key_from_der(public_key_der)
             .map_err(|e| CryptoError::InvalidKey(Some(e.to_string().into())))?;
         let pkey =
@@ -267,9 +277,11 @@ impl CryptoProvider for OpenSslProvider {
     fn rsa_pkcs1v15_sign(
         &self,
         private_key_der: &[u8],
-        digest: &[u8],
+        data: &[u8],
         hash_alg: HashAlgorithm,
     ) -> Result<Vec<u8>, CryptoError> {
+        let digest = super::hash(self, hash_alg, data);
+        let digest = digest.as_slice();
         let rsa = Rsa::private_key_from_der(private_key_der)
             .map_err(|e| CryptoError::InvalidKey(Some(e.to_string().into())))?;
         let pkey =
@@ -292,9 +304,11 @@ impl CryptoProvider for OpenSslProvider {
         &self,
         public_key_der: &[u8],
         signature: &[u8],
-        digest: &[u8],
+        data: &[u8],
         hash_alg: HashAlgorithm,
     ) -> Result<bool, CryptoError> {
+        let digest = super::hash(self, hash_alg, data);
+        let digest = digest.as_slice();
         let rsa = Rsa::public_key_from_der(public_key_der)
             .map_err(|e| CryptoError::InvalidKey(Some(e.to_string().into())))?;
         let pkey =

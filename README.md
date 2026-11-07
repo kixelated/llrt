@@ -542,14 +542,15 @@ LLRT supports multiple cryptographic backends for both the crypto module and TLS
 
 ### Crypto Provider Features
 
-| Feature                 | Description                                                       |
-| ----------------------- | ----------------------------------------------------------------- |
-| `crypto-rust` (default) | Pure Rust crypto using RustCrypto crates                          |
-| `crypto-ring`           | Ring-only crypto (limited algorithm support)                      |
-| `crypto-ring-rust`      | Ring for hashing/HMAC, RustCrypto for everything else             |
-| `crypto-graviola`       | Graviola-only crypto (limited algorithm support)                  |
-| `crypto-graviola-rust`  | Graviola for hashing/HMAC/AES-GCM, RustCrypto for everything else |
-| `crypto-openssl`        | OpenSSL-based crypto                                              |
+| Feature                 | Description                                                        |
+| ----------------------- | ------------------------------------------------------------------ |
+| `crypto-rust` (default) | Pure Rust crypto using RustCrypto crates                           |
+| `crypto-ring`           | Ring-only crypto (limited algorithm support)                       |
+| `crypto-ring-rust`      | Ring for hashing/HMAC, RustCrypto for everything else              |
+| `crypto-graviola`       | Graviola-only crypto (limited algorithm support)                   |
+| `crypto-graviola-rust`  | Graviola for hashing/HMAC/AES-GCM, RustCrypto for everything else  |
+| `crypto-rind`           | rind-only crypto (no SHA-1 signatures, RSA keys of 2048-8192 bits) |
+| `crypto-openssl`        | OpenSSL-based crypto                                               |
 
 ### TLS Backend Features
 
@@ -558,6 +559,7 @@ LLRT supports multiple cryptographic backends for both the crypto module and TLS
 | `tls-ring` (default) | rustls with ring crypto                       |
 | `tls-aws-lc`         | rustls with AWS-LC crypto (optimized for AWS) |
 | `tls-graviola`       | rustls with graviola crypto                   |
+| `tls-rind`           | rustls with rind crypto                       |
 | `tls-openssl`        | OpenSSL for TLS                               |
 
 ### Building with Different Backends
@@ -574,6 +576,9 @@ cargo build --release --no-default-features --features "macro,crypto-openssl,tls
 
 # Using Graviola for both crypto and TLS
 cargo build --release --no-default-features --features "macro,crypto-graviola-rust,tls-graviola"
+
+# Using rind for both crypto and TLS
+cargo build --release --no-default-features --features "macro,crypto-rind,tls-rind"
 ```
 
 ## Running Lambda emulator

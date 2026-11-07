@@ -176,8 +176,11 @@ impl CryptoProvider for RustCryptoProvider {
         &self,
         curve: EllipticCurve,
         private_key_der: &[u8],
-        digest: &[u8],
+        data: &[u8],
+        hash_alg: HashAlgorithm,
     ) -> Result<Vec<u8>, CryptoError> {
+        let digest = super::hash(self, hash_alg, data);
+        let digest = digest.as_slice();
         match curve {
             EllipticCurve::P256 => {
                 let secret_key = P256SecretKey::from_pkcs8_der(private_key_der)
@@ -214,8 +217,11 @@ impl CryptoProvider for RustCryptoProvider {
         curve: EllipticCurve,
         public_key_sec1: &[u8],
         signature: &[u8],
-        digest: &[u8],
+        data: &[u8],
+        hash_alg: HashAlgorithm,
     ) -> Result<bool, CryptoError> {
+        let digest = super::hash(self, hash_alg, data);
+        let digest = digest.as_slice();
         match curve {
             EllipticCurve::P256 => {
                 let verifying_key = P256VerifyingKey::from_sec1_bytes(public_key_sec1)
@@ -273,10 +279,12 @@ impl CryptoProvider for RustCryptoProvider {
     fn rsa_pss_sign(
         &self,
         private_key_der: &[u8],
-        digest: &[u8],
+        data: &[u8],
         salt_length: usize,
         hash_alg: HashAlgorithm,
     ) -> Result<Vec<u8>, CryptoError> {
+        let digest = super::hash(self, hash_alg, data);
+        let digest = digest.as_slice();
         let mut rng = rand::rng();
         let private_key = RsaPrivateKey::from_pkcs1_der(private_key_der)
             .map_err(|_| CryptoError::InvalidKey(None))?;
@@ -302,10 +310,12 @@ impl CryptoProvider for RustCryptoProvider {
         &self,
         public_key_der: &[u8],
         signature: &[u8],
-        digest: &[u8],
+        data: &[u8],
         salt_length: usize,
         hash_alg: HashAlgorithm,
     ) -> Result<bool, CryptoError> {
+        let digest = super::hash(self, hash_alg, data);
+        let digest = digest.as_slice();
         let public_key = RsaPublicKey::from_pkcs1_der(public_key_der)
             .map_err(|_| CryptoError::InvalidKey(None))?;
 
@@ -329,9 +339,11 @@ impl CryptoProvider for RustCryptoProvider {
     fn rsa_pkcs1v15_sign(
         &self,
         private_key_der: &[u8],
-        digest: &[u8],
+        data: &[u8],
         hash_alg: HashAlgorithm,
     ) -> Result<Vec<u8>, CryptoError> {
+        let digest = super::hash(self, hash_alg, data);
+        let digest = digest.as_slice();
         let mut rng = rand::rng();
         let private_key = RsaPrivateKey::from_pkcs1_der(private_key_der)
             .map_err(|_| CryptoError::InvalidKey(None))?;
@@ -357,9 +369,11 @@ impl CryptoProvider for RustCryptoProvider {
         &self,
         public_key_der: &[u8],
         signature: &[u8],
-        digest: &[u8],
+        data: &[u8],
         hash_alg: HashAlgorithm,
     ) -> Result<bool, CryptoError> {
+        let digest = super::hash(self, hash_alg, data);
+        let digest = digest.as_slice();
         let public_key = RsaPublicKey::from_pkcs1_der(public_key_der)
             .map_err(|_| CryptoError::InvalidKey(None))?;
 

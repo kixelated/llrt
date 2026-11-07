@@ -41,6 +41,7 @@ tls-graviola = [
   "dep:hyper-rustls",
   "dep:rustls",
 ]
+tls-rind = ["http1", "llrt_tls/tls-rind", "dep:hyper-rustls", "dep:rustls"]
 
 # OpenSSL TLS backend
 tls-openssl = [

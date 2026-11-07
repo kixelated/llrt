@@ -62,8 +62,6 @@ use rquickjs::{
     Object, Result, Value,
 };
 
-use crate::provider::{CryptoProvider, SimpleDigest};
-
 use crate::hash::HashAlgorithm;
 
 #[rquickjs::class]
@@ -118,12 +116,11 @@ pub enum EncryptionMode {
     Wrapping(u8), //padding byte
 }
 
-pub fn rsa_hash_digest<'a>(
+pub fn rsa_hash<'a>(
     ctx: &Ctx<'_>,
     key: &'a CryptoKey,
-    data: &'a [u8],
     algorithm_name: &str,
-) -> Result<(&'a HashAlgorithm, Vec<u8>)> {
+) -> Result<&'a HashAlgorithm> {
     let hash = match &key.algorithm {
         KeyAlgorithm::Rsa { hash, .. } => hash,
         _ => return algorithm_mismatch_error(ctx, algorithm_name),
@@ -138,11 +135,7 @@ pub fn rsa_hash_digest<'a>(
         ));
     }
 
-    let mut hasher = crate::CRYPTO_PROVIDER.digest(*hash);
-    hasher.update(data);
-    let digest = hasher.finalize();
-
-    Ok((hash, digest))
+    Ok(hash)
 }
 
 pub fn validate_rsa_pss_salt_length(

@@ -88,6 +88,11 @@ jobs:
             platform: linux
             arch: x86_64
             toolchain: nightly
+            crypto: rind
+          - os: ubuntu-latest
+            platform: linux
+            arch: x86_64
+            toolchain: nightly
             crypto: openssl
           # Ubuntu arm64
           - os: ubuntu-24.04-arm
@@ -105,6 +110,11 @@ jobs:
             arch: aarch64
             toolchain: nightly
             crypto: graviola
+          - os: ubuntu-24.04-arm
+            platform: linux
+            arch: aarch64
+            toolchain: nightly
+            crypto: rind
           - os: ubuntu-24.04-arm
             platform: linux
             arch: aarch64
@@ -130,6 +140,11 @@ jobs:
             platform: darwin
             arch: aarch64
             toolchain: nightly
+            crypto: rind
+          - os: macos-latest
+            platform: darwin
+            arch: aarch64
+            toolchain: nightly
             crypto: openssl
           # Windows x64 (ring, openssl, graviola - no aws-lc)
           - os: windows-latest
@@ -147,6 +162,11 @@ jobs:
             arch: x86_64
             toolchain: nightly-x86_64-pc-windows-gnu
             crypto: graviola
+          - os: windows-latest
+            platform: windows
+            arch: x86_64
+            toolchain: nightly-x86_64-pc-windows-gnu
+            crypto: rind
     uses: ./.github/workflows/build.yml
     with:
       os: ${{ matrix.os }}
@@ -181,6 +201,11 @@ jobs:
             platform: linux
             arch: x86_64
             toolchain: stable
+            crypto: rind
+          - os: ubuntu-latest
+            platform: linux
+            arch: x86_64
+            toolchain: stable
             crypto: openssl
           # Ubuntu arm64
           - os: ubuntu-24.04-arm
@@ -198,6 +223,11 @@ jobs:
             arch: aarch64
             toolchain: stable
             crypto: graviola
+          - os: ubuntu-24.04-arm
+            platform: linux
+            arch: aarch64
+            toolchain: stable
+            crypto: rind
           - os: ubuntu-24.04-arm
             platform: linux
             arch: aarch64
@@ -223,6 +253,11 @@ jobs:
             platform: darwin
             arch: aarch64
             toolchain: stable
+            crypto: rind
+          - os: macos-latest
+            platform: darwin
+            arch: aarch64
+            toolchain: stable
             crypto: openssl
           # Windows x64 (ring, openssl, graviola - no aws-lc)
           - os: windows-latest
@@ -240,6 +275,11 @@ jobs:
             arch: x86_64
             toolchain: stable-x86_64-pc-windows-gnu
             crypto: graviola
+          - os: windows-latest
+            platform: windows
+            arch: x86_64
+            toolchain: stable-x86_64-pc-windows-gnu
+            crypto: rind
     uses: ./.github/workflows/build-modules.yml
     with:
       os: ${{ matrix.os }}

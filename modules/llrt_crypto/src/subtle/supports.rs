@@ -31,10 +31,31 @@ fn provider_supports_generate_key(algorithm: &KeyAlgorithm) -> bool {
     true
 }
 
-#[cfg(all(feature = "_subtle-full", not(feature = "crypto-openssl")))]
+#[cfg(all(
+    feature = "_subtle-full",
+    not(any(feature = "crypto-openssl", feature = "crypto-rind"))
+))]
 fn provider_supports_generate_key(algorithm: &KeyAlgorithm) -> bool {
     if let KeyAlgorithm::Rsa { modulus_length, .. } = algorithm {
         return *modulus_length >= 1024;
+    }
+    true
+}
+
+/// rind generates RSA keys of 2048 to 8192 bits with an exponent of 65537.
+#[cfg(feature = "crypto-rind")]
+fn provider_supports_generate_key(algorithm: &KeyAlgorithm) -> bool {
+    if let KeyAlgorithm::Rsa {
+        modulus_length,
+        public_exponent,
+        ..
+    } = algorithm
+    {
+        return matches!(modulus_length, 2048 | 3072 | 4096 | 6144 | 8192)
+            && matches!(
+                crate::provider::parse_rsa_public_exponent(public_exponent),
+                Ok(65537)
+            );
     }
     true
 }
@@ -54,9 +75,20 @@ fn provider_supports_generate_key(algorithm: &KeyAlgorithm) -> bool {
     }
 }
 
-#[cfg(feature = "_subtle-full")]
+#[cfg(all(feature = "_subtle-full", not(feature = "crypto-rind")))]
 fn provider_supports_sign(_algorithm: &SigningAlgorithm) -> bool {
     true
+}
+
+/// rind refuses SHA-1 signatures.
+#[cfg(feature = "crypto-rind")]
+fn provider_supports_sign(algorithm: &SigningAlgorithm) -> bool {
+    !matches!(
+        algorithm,
+        SigningAlgorithm::Ecdsa {
+            hash: crate::hash::HashAlgorithm::Sha1
+        }
+    )
 }
 
 #[cfg(not(feature = "_subtle-full"))]

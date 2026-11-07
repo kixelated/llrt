@@ -13,6 +13,15 @@ compile_error!("Features 'tls-ring' and 'tls-graviola' are mutually exclusive");
 #[cfg(all(feature = "tls-aws-lc", feature = "tls-graviola"))]
 compile_error!("Features 'tls-aws-lc' and 'tls-graviola' are mutually exclusive");
 
+#[cfg(all(feature = "tls-rind", feature = "tls-ring"))]
+compile_error!("Features 'tls-rind' and 'tls-ring' are mutually exclusive");
+
+#[cfg(all(feature = "tls-rind", feature = "tls-aws-lc"))]
+compile_error!("Features 'tls-rind' and 'tls-aws-lc' are mutually exclusive");
+
+#[cfg(all(feature = "tls-rind", feature = "tls-graviola"))]
+compile_error!("Features 'tls-rind' and 'tls-graviola' are mutually exclusive");
+
 use std::net::{Ipv4Addr, SocketAddr};
 
 use tokio::net::TcpListener;
