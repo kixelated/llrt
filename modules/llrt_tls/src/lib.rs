@@ -11,7 +11,7 @@ compile_error!("Features `tls-ring` and `tls-graviola` are mutually exclusive");
 #[cfg(all(feature = "tls-ring", feature = "tls-openssl"))]
 compile_error!("Features `tls-ring` and `tls-openssl` are mutually exclusive");
 
-#[cfg(all(feature = "tls-aws-lc", feature = "tls-graviola"))]
+#[cfg(all(feature = "tls-aws-lc", feature = "tls-graviola", feature = "tls-rind"))]
 compile_error!("Features `tls-aws-lc` and `tls-graviola` are mutually exclusive");
 
 #[cfg(all(feature = "tls-aws-lc", feature = "tls-openssl"))]
@@ -20,13 +20,40 @@ compile_error!("Features `tls-aws-lc` and `tls-openssl` are mutually exclusive")
 #[cfg(all(feature = "tls-graviola", feature = "tls-openssl"))]
 compile_error!("Features `tls-graviola` and `tls-openssl` are mutually exclusive");
 
-#[cfg(any(feature = "tls-ring", feature = "tls-aws-lc", feature = "tls-graviola"))]
+#[cfg(all(feature = "tls-rind", feature = "tls-ring"))]
+compile_error!("Features `tls-rind` and `tls-ring` are mutually exclusive");
+
+#[cfg(all(feature = "tls-rind", feature = "tls-aws-lc"))]
+compile_error!("Features `tls-rind` and `tls-aws-lc` are mutually exclusive");
+
+#[cfg(all(feature = "tls-rind", feature = "tls-graviola"))]
+compile_error!("Features `tls-rind` and `tls-graviola` are mutually exclusive");
+
+#[cfg(all(feature = "tls-rind", feature = "tls-openssl"))]
+compile_error!("Features `tls-rind` and `tls-openssl` are mutually exclusive");
+
+#[cfg(any(
+    feature = "tls-ring",
+    feature = "tls-aws-lc",
+    feature = "tls-graviola",
+    feature = "tls-rind"
+))]
 mod rustls_config;
 
-#[cfg(any(feature = "tls-ring", feature = "tls-aws-lc", feature = "tls-graviola"))]
+#[cfg(any(
+    feature = "tls-ring",
+    feature = "tls-aws-lc",
+    feature = "tls-graviola",
+    feature = "tls-rind"
+))]
 pub use rustls_config::*;
 
-#[cfg(any(feature = "tls-ring", feature = "tls-aws-lc", feature = "tls-graviola"))]
+#[cfg(any(
+    feature = "tls-ring",
+    feature = "tls-aws-lc",
+    feature = "tls-graviola",
+    feature = "tls-rind"
+))]
 mod no_verification;
 
 #[cfg(feature = "tls-openssl")]

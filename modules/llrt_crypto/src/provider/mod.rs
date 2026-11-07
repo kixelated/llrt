@@ -23,8 +23,23 @@ compile_error!("Features `crypto-openssl` and `crypto-graviola` are mutually exc
 #[cfg(all(feature = "crypto-ring-rust", feature = "crypto-graviola-rust"))]
 compile_error!("Features `crypto-ring-rust` and `crypto-graviola-rust` are mutually exclusive");
 
+#[cfg(all(feature = "crypto-rind", feature = "crypto-rust"))]
+compile_error!("Features `crypto-rind` and `crypto-rust` are mutually exclusive");
+
+#[cfg(all(feature = "crypto-rind", feature = "crypto-ring"))]
+compile_error!("Features `crypto-rind` and `crypto-ring` are mutually exclusive");
+
+#[cfg(all(feature = "crypto-rind", feature = "crypto-graviola"))]
+compile_error!("Features `crypto-rind` and `crypto-graviola` are mutually exclusive");
+
+#[cfg(all(feature = "crypto-rind", feature = "crypto-openssl"))]
+compile_error!("Features `crypto-rind` and `crypto-openssl` are mutually exclusive");
+
 #[cfg(any(feature = "crypto-graviola", feature = "crypto-graviola-rust"))]
 mod graviola;
+
+#[cfg(feature = "crypto-rind")]
+mod rind;
 
 #[cfg(feature = "crypto-openssl")]
 mod openssl;
@@ -500,7 +515,11 @@ pub trait HmacProvider: Send {
 
 /// Hashes `data` with `provider`'s `algorithm`, for a backend that signs digests.
 #[allow(dead_code)]
-pub(crate) fn hash<P: CryptoProvider>(provider: &P, algorithm: HashAlgorithm, data: &[u8]) -> Vec<u8> {
+pub(crate) fn hash<P: CryptoProvider>(
+    provider: &P,
+    algorithm: HashAlgorithm,
+    data: &[u8],
+) -> Vec<u8> {
     let mut digest = provider.digest(algorithm);
     digest.update(data);
     digest.finalize()
@@ -581,6 +600,9 @@ pub type DefaultProvider = graviola::GraviolaProvider;
 
 #[cfg(feature = "crypto-graviola-rust")]
 pub type DefaultProvider = GraviolaRustProvider;
+
+#[cfg(feature = "crypto-rind")]
+pub type DefaultProvider = rind::RindProvider;
 
 // Macro to generate hybrid providers that delegate to RustCrypto
 #[cfg(any(feature = "crypto-ring-rust", feature = "crypto-graviola-rust"))]
@@ -977,6 +999,8 @@ mod tests {
         return ring::RingProvider;
         #[cfg(all(feature = "crypto-graviola", not(feature = "crypto-graviola-rust")))]
         return graviola::GraviolaProvider;
+        #[cfg(feature = "crypto-rind")]
+        return rind::RindProvider;
     }
 
     fn to_hex(bytes: &[u8]) -> String {
@@ -1031,7 +1055,8 @@ mod tests {
         feature = "crypto-rust",
         feature = "crypto-openssl",
         feature = "crypto-ring-rust",
-        feature = "crypto-graviola-rust"
+        feature = "crypto-graviola-rust",
+        feature = "crypto-rind"
     ))]
     #[test]
     fn test_aes_gcm_128_roundtrip() {
@@ -1070,7 +1095,8 @@ mod tests {
         feature = "crypto-rust",
         feature = "crypto-openssl",
         feature = "crypto-ring-rust",
-        feature = "crypto-graviola-rust"
+        feature = "crypto-graviola-rust",
+        feature = "crypto-rind"
     ))]
     #[test]
     fn test_aes_gcm_256_roundtrip() {
@@ -1100,7 +1126,8 @@ mod tests {
         feature = "crypto-rust",
         feature = "crypto-openssl",
         feature = "crypto-ring-rust",
-        feature = "crypto-graviola-rust"
+        feature = "crypto-graviola-rust",
+        feature = "crypto-rind"
     ))]
     #[test]
     fn test_aes_gcm_wrong_key_fails() {
@@ -1145,7 +1172,8 @@ mod tests {
         feature = "crypto-rust",
         feature = "crypto-openssl",
         feature = "crypto-ring-rust",
-        feature = "crypto-graviola-rust"
+        feature = "crypto-graviola-rust",
+        feature = "crypto-rind"
     ))]
     #[test]
     fn test_generate_aes_key_128() {
@@ -1158,7 +1186,8 @@ mod tests {
         feature = "crypto-rust",
         feature = "crypto-openssl",
         feature = "crypto-ring-rust",
-        feature = "crypto-graviola-rust"
+        feature = "crypto-graviola-rust",
+        feature = "crypto-rind"
     ))]
     #[test]
     fn test_generate_aes_key_256() {
@@ -1171,7 +1200,8 @@ mod tests {
         feature = "crypto-rust",
         feature = "crypto-openssl",
         feature = "crypto-ring-rust",
-        feature = "crypto-graviola-rust"
+        feature = "crypto-graviola-rust",
+        feature = "crypto-rind"
     ))]
     #[test]
     fn test_generate_hmac_key() {
@@ -1185,7 +1215,8 @@ mod tests {
         feature = "crypto-rust",
         feature = "crypto-openssl",
         feature = "crypto-ring-rust",
-        feature = "crypto-graviola-rust"
+        feature = "crypto-graviola-rust",
+        feature = "crypto-rind"
     ))]
     mod full_provider_tests {
         use super::*;
@@ -1284,7 +1315,12 @@ mod tests {
 
             let message = b"message to sign";
             let signature = p
-                .ecdsa_sign(EllipticCurve::P256, &private_key, message, HashAlgorithm::Sha256)
+                .ecdsa_sign(
+                    EllipticCurve::P256,
+                    &private_key,
+                    message,
+                    HashAlgorithm::Sha256,
+                )
                 .unwrap();
 
             let valid = p
@@ -1307,7 +1343,12 @@ mod tests {
 
             let message = b"message to sign";
             let signature = p
-                .ecdsa_sign(EllipticCurve::P384, &private_key, message, HashAlgorithm::Sha384)
+                .ecdsa_sign(
+                    EllipticCurve::P384,
+                    &private_key,
+                    message,
+                    HashAlgorithm::Sha384,
+                )
                 .unwrap();
 
             let valid = p

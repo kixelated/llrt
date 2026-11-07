@@ -1,10 +1,16 @@
-#[cfg(any(feature = "tls-ring", feature = "tls-aws-lc", feature = "tls-graviola"))]
+#[cfg(any(
+    feature = "tls-ring",
+    feature = "tls-aws-lc",
+    feature = "tls-graviola",
+    feature = "tls-rind"
+))]
 use std::sync::Arc;
 
 #[cfg(any(
     feature = "tls-ring",
     feature = "tls-aws-lc",
     feature = "tls-graviola",
+    feature = "tls-rind",
     feature = "tls-openssl"
 ))]
 use hyper::service::service_fn;
@@ -12,6 +18,7 @@ use hyper::service::service_fn;
     feature = "tls-ring",
     feature = "tls-aws-lc",
     feature = "tls-graviola",
+    feature = "tls-rind",
     feature = "tls-openssl"
 ))]
 use hyper_util::rt::{TokioExecutor, TokioIo};
@@ -19,6 +26,7 @@ use hyper_util::rt::{TokioExecutor, TokioIo};
     feature = "tls-ring",
     feature = "tls-aws-lc",
     feature = "tls-graviola",
+    feature = "tls-rind",
     feature = "tls-openssl"
 ))]
 use hyper_util::server::conn::auto::Builder;
@@ -26,6 +34,7 @@ use hyper_util::server::conn::auto::Builder;
     feature = "tls-ring",
     feature = "tls-aws-lc",
     feature = "tls-graviola",
+    feature = "tls-rind",
     feature = "tls-openssl"
 ))]
 use tokio::net::TcpListener;
@@ -34,6 +43,7 @@ use tokio::net::TcpListener;
     feature = "tls-ring",
     feature = "tls-aws-lc",
     feature = "tls-graviola",
+    feature = "tls-rind",
     feature = "tls-openssl"
 ))]
 use crate::MockServerCerts;
@@ -48,12 +58,22 @@ fn get_crypto_provider() -> Arc<rustls::crypto::CryptoProvider> {
     Arc::new(rustls::crypto::aws_lc_rs::default_provider())
 }
 
+#[cfg(feature = "tls-rind")]
+fn get_crypto_provider() -> Arc<rustls::crypto::CryptoProvider> {
+    Arc::new(rind_rustls::default_provider().unwrap_or_else(|missing| panic!("{missing}")))
+}
+
 #[cfg(feature = "tls-graviola")]
 fn get_crypto_provider() -> Arc<rustls::crypto::CryptoProvider> {
     Arc::new(rustls_graviola::default_provider())
 }
 
-#[cfg(any(feature = "tls-ring", feature = "tls-aws-lc", feature = "tls-graviola"))]
+#[cfg(any(
+    feature = "tls-ring",
+    feature = "tls-aws-lc",
+    feature = "tls-graviola",
+    feature = "tls-rind"
+))]
 pub(super) async fn run(
     listener: TcpListener,
     certs: MockServerCerts,

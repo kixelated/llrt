@@ -64,6 +64,7 @@ crypto-ring = ["ring", "md-5", "_modern-webcrypto"]
 crypto-ring-rust = ["ring", "_rustcrypto", "_modern-webcrypto"]
 crypto-graviola = ["graviola", "_modern-webcrypto"]
 crypto-graviola-rust = ["graviola", "_rustcrypto", "_modern-webcrypto"]
+crypto-rind = ["rind", "pkcs1", "_subtle-full", "_modern-webcrypto"]
 crypto-openssl = ["openssl-sys", "openssl", "_subtle-full", "_modern-webcrypto"]
 
 [dependencies]
@@ -175,6 +176,10 @@ ring = { version = "0.17", default-features = false, optional = true }
 openssl-sys = { version = "0.9", optional = true }
 openssl = { version = "0.10", optional = true }
 graviola = { version = "0.4", optional = true }
+rind = { version = "0.2.1", optional = true }
+pkcs1 = { version = "0.8.0-rc.5", default-features = false, features = [
+  "alloc",
+], optional = true }
 
 [dev-dependencies]
 llrt_test = { path = "../../libs/llrt_test" }

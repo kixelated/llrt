@@ -15,6 +15,7 @@ default = ["tls-ring"]
 tls-ring = ["rustls/ring"]
 tls-aws-lc = ["rustls/aws_lc_rs"]
 tls-graviola = ["dep:rustls-graviola"]
+tls-rind = ["dep:rind-rustls"]
 tls-openssl = ["dep:openssl", "dep:tokio-openssl"]
 
 [dependencies]
@@ -27,6 +28,7 @@ hyper-util = { version = "0.1", features = [
 http = { version = "1", default-features = false }
 rustls = { version = "0.23", features = ["tls12"], default-features = false }
 rustls-graviola = { version = "0.4", default-features = false, optional = true }
+rind-rustls = { version = "0.23", optional = true }
 openssl = { version = "0.10", optional = true }
 tokio-openssl = { version = "0.6", optional = true }
 tokio = { version = "1", features = [

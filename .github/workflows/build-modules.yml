@@ -69,6 +69,10 @@ jobs:
               echo "tls_feature=tls-graviola" >> $GITHUB_OUTPUT
               echo "crypto_feature=crypto-graviola" >> $GITHUB_OUTPUT
               ;;
+            rind)
+              echo "tls_feature=tls-rind" >> $GITHUB_OUTPUT
+              echo "crypto_feature=crypto-rind" >> $GITHUB_OUTPUT
+              ;;
             ring)
               echo "tls_feature=tls-ring" >> $GITHUB_OUTPUT
               echo "crypto_feature=crypto-ring" >> $GITHUB_OUTPUT

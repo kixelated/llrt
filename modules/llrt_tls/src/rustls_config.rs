@@ -29,6 +29,12 @@ fn get_crypto_provider() -> Arc<rustls::crypto::CryptoProvider> {
     Arc::new(rustls_graviola::default_provider())
 }
 
+#[cfg(feature = "tls-rind")]
+fn get_crypto_provider() -> Arc<rustls::crypto::CryptoProvider> {
+    // Fails only on a CPU without an instruction rind requires, which it names.
+    Arc::new(rind_rustls::default_provider().unwrap_or_else(|missing| panic!("{missing}")))
+}
+
 static EXTRA_CA_CERTS: OnceLock<Vec<CertificateDer<'static>>> = OnceLock::new();
 
 pub fn set_extra_ca_certs(certs: Vec<CertificateDer<'static>>) {

@@ -98,6 +98,9 @@ jobs:
             graviola)
               echo "cargo_features=--no-default-features --features macro,crypto-graviola-rust,tls-graviola" >> $GITHUB_OUTPUT
               ;;
+            rind)
+              echo "cargo_features=--no-default-features --features macro,crypto-rind,tls-rind" >> $GITHUB_OUTPUT
+              ;;
             ring)
               echo "cargo_features=--no-default-features --features macro,crypto-ring-rust,tls-ring" >> $GITHUB_OUTPUT
               ;;

@@ -63,7 +63,7 @@ fullCrypto("SubtleCrypto generateKey/sign/verify", () => {
   const hashAlgorithms = ["SHA-1", "SHA-256", "SHA-384", "SHA-512"];
   const curves = ["P-256", "P-384"];
   const rsaParams = {
-    modulusLength: 1024,
+    modulusLength: 2048,
     publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
   };
 
@@ -214,7 +214,7 @@ fullCrypto("SubtleCrypto generateKey/sign/verify", () => {
       crypto.subtle.generateKey(
         {
           name: "RSA-PSS",
-          modulusLength: 1024 + 2 ** 32,
+          modulusLength: 2048 + 2 ** 32,
           publicExponent: new Uint8Array([1, 0, 1]),
           hash: "SHA-256",
         },
@@ -328,7 +328,7 @@ fullCrypto("SubtleCrypto generateKey/sign/verify", () => {
     const rsaKeyPair = await crypto.subtle.generateKey(
       {
         name: "RSA-PSS",
-        modulusLength: 1024,
+        modulusLength: 2048,
         publicExponent: new Uint8Array([1, 0, 1]),
         hash: "SHA-256",
       },
@@ -413,14 +413,14 @@ fullCrypto("SubtleCrypto generateKey/sign/verify", () => {
     const { publicKey, privateKey } = await crypto.subtle.generateKey(
       {
         name: "RSA-PSS",
-        modulusLength: 1024,
+        modulusLength: 2048,
         publicExponent: new Uint8Array([1, 0, 1]),
         hash: "SHA-256",
       },
       false,
       ["sign", "verify"]
     );
-    const maximum = 1024 / 8 - 32 - 2;
+    const maximum = 2048 / 8 - 32 - 2;
     const signature = await crypto.subtle.sign(
       { name: "RSA-PSS", saltLength: maximum },
       privateKey,
@@ -931,7 +931,7 @@ fullCrypto("SubtleCrypto string AlgorithmIdentifier", () => {
     const { privateKey, publicKey } = (await crypto.subtle.generateKey(
       {
         name: "RSA-OAEP",
-        modulusLength: 1024,
+        modulusLength: 2048,
         publicExponent: new Uint8Array([1, 0, 1]),
         hash: "SHA-256",
       },
@@ -957,7 +957,7 @@ fullCrypto("SubtleCrypto string AlgorithmIdentifier", () => {
     const { privateKey, publicKey } = (await crypto.subtle.generateKey(
       {
         name: "RSA-OAEP",
-        modulusLength: 1024,
+        modulusLength: 2048,
         publicExponent: new Uint8Array([1, 0, 1]),
         hash: "SHA-256",
       },
@@ -1071,7 +1071,7 @@ fullCrypto("SubtleCrypto string AlgorithmIdentifier", () => {
     const rsassa = (await crypto.subtle.generateKey(
       {
         name: "RSASSA-PKCS1-v1_5",
-        modulusLength: 1024,
+        modulusLength: 2048,
         publicExponent: new Uint8Array([1, 0, 1]),
         hash: "SHA-256",
       },
@@ -1095,7 +1095,7 @@ fullCrypto("SubtleCrypto string AlgorithmIdentifier", () => {
     const rsaPss = (await crypto.subtle.generateKey(
       {
         name: "RSA-PSS",
-        modulusLength: 1024,
+        modulusLength: 2048,
         publicExponent: new Uint8Array([1, 0, 1]),
         hash: "SHA-256",
       },
@@ -1126,7 +1126,7 @@ fullCrypto("SubtleCrypto string AlgorithmIdentifier", () => {
     const rsaPss = (await crypto.subtle.generateKey(
       {
         name: "RSA-PSS",
-        modulusLength: 1024,
+        modulusLength: 2048,
         publicExponent: new Uint8Array([1, 0, 1]),
         hash: "SHA-256",
       },
@@ -1861,7 +1861,7 @@ fullCrypto("SubtileCrypto import/export", () => {
     const rsaKeyPair = await crypto.subtle.generateKey(
       {
         name: "RSA-PSS",
-        modulusLength: 1024,
+        modulusLength: 2048,
         publicExponent: new Uint8Array([1, 0, 1]),
         hash: "SHA-256",
       },
@@ -2055,7 +2055,7 @@ fullCrypto("SubtileCrypto import/export", () => {
   it("should import an RSA public JWK without alg", async () => {
     const algorithm = {
       name: "RSASSA-PKCS1-v1_5",
-      modulusLength: 1024,
+      modulusLength: 2048,
       publicExponent: new Uint8Array([1, 0, 1]),
       hash: "SHA-256",
     };

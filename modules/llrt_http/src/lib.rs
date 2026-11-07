@@ -5,6 +5,7 @@ use llrt_utils::module::{export_default, ModuleInfo};
     feature = "tls-ring",
     feature = "tls-aws-lc",
     feature = "tls-graviola",
+    feature = "tls-rind",
     feature = "tls-openssl"
 ))]
 use rquickjs::Class;
@@ -19,6 +20,7 @@ pub use self::config::*;
     feature = "tls-ring",
     feature = "tls-aws-lc",
     feature = "tls-graviola",
+    feature = "tls-rind",
     feature = "tls-openssl"
 ))]
 mod client;
@@ -28,6 +30,7 @@ mod config;
     feature = "tls-ring",
     feature = "tls-aws-lc",
     feature = "tls-graviola",
+    feature = "tls-rind",
     feature = "tls-openssl"
 ))]
 mod agent;
@@ -36,6 +39,7 @@ mod agent;
     feature = "tls-ring",
     feature = "tls-aws-lc",
     feature = "tls-graviola",
+    feature = "tls-rind",
     feature = "tls-openssl"
 ))]
 pub use self::{agent::Agent, client::*};
@@ -48,6 +52,7 @@ impl ModuleDef for HttpsModule {
             feature = "tls-ring",
             feature = "tls-aws-lc",
             feature = "tls-graviola",
+            feature = "tls-rind",
             feature = "tls-openssl"
         ))]
         declare.declare(stringify!(Agent))?;
@@ -61,6 +66,7 @@ impl ModuleDef for HttpsModule {
                 feature = "tls-ring",
                 feature = "tls-aws-lc",
                 feature = "tls-graviola",
+                feature = "tls-rind",
                 feature = "tls-openssl"
             ))]
             Class::<Agent>::define(default)?;

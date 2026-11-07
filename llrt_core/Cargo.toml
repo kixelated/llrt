@@ -19,6 +19,7 @@ intl402 = ["llrt_modules/intl402"]
 tls-ring = ["rustls/ring", "llrt_modules/tls-ring"]
 tls-aws-lc = ["rustls/aws_lc_rs", "llrt_modules/tls-aws-lc"]
 tls-graviola = ["llrt_modules/tls-graviola"]
+tls-rind = ["llrt_modules/tls-rind"]
 tls-openssl = ["llrt_modules/tls-openssl", "dep:openssl"]
 
 # Crypto provider features
@@ -27,6 +28,7 @@ crypto-ring = ["llrt_modules/crypto-ring"]
 crypto-ring-rust = ["llrt_modules/crypto-ring-rust"]
 crypto-graviola = ["llrt_modules/crypto-graviola"]
 crypto-graviola-rust = ["llrt_modules/crypto-graviola-rust"]
+crypto-rind = ["llrt_modules/crypto-rind"]
 crypto-openssl = ["llrt_modules/crypto-openssl"]
 
 # OpenSSL vendored (builds OpenSSL from source)

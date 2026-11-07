@@ -998,14 +998,16 @@ mod tests {
     #[cfg(any(
         feature = "tls-ring",
         feature = "tls-aws-lc",
-        all(feature = "tls-graviola", target_arch = "x86_64")
+        all(feature = "tls-graviola", target_arch = "x86_64"),
+        feature = "tls-rind"
     ))]
     use llrt_http::HttpsModule;
     use llrt_test::test_async_with;
     #[cfg(any(
         feature = "tls-ring",
         feature = "tls-aws-lc",
-        all(feature = "tls-graviola", target_arch = "x86_64")
+        all(feature = "tls-graviola", target_arch = "x86_64"),
+        feature = "tls-rind"
     ))]
     use llrt_test::{call_test, ModuleEvaluator};
     use rquickjs::{prelude::Promise, CatchResultExt};
@@ -1521,7 +1523,8 @@ mod tests {
     #[cfg(any(
         feature = "tls-ring",
         feature = "tls-aws-lc",
-        all(feature = "tls-graviola", target_arch = "x86_64")
+        all(feature = "tls-graviola", target_arch = "x86_64"),
+        feature = "tls-rind"
     ))]
     #[tokio::test]
     async fn test_fetch_tls() {
@@ -1568,7 +1571,8 @@ mod tests {
     #[cfg(any(
         feature = "tls-ring",
         feature = "tls-aws-lc",
-        all(feature = "tls-graviola", target_arch = "x86_64")
+        all(feature = "tls-graviola", target_arch = "x86_64"),
+        feature = "tls-rind"
     ))]
     #[tokio::test]
     async fn test_fetch_ignore_certificate_errors() {
